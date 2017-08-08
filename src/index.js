@@ -9,7 +9,7 @@ import warning from './utils/warning'
 * This is a dummy function to check if the function name has been altered by minification.
 * If the function has been minified and NODE_ENV !== 'production', warn the user.
 */
-function isCrushed() {}
+function isCrushed() {} // 检测代码是否被压缩
 
 if (
   process.env.NODE_ENV !== 'production' &&

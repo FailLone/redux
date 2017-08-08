@@ -112,10 +112,10 @@ export default function combineReducers(reducers) {
     }
 
     if (typeof reducers[key] === 'function') {
-      finalReducers[key] = reducers[key]
+      finalReducers[key] = reducers[key] // 剔除了非函数的reducers
     }
   }
-  const finalReducerKeys = Object.keys(finalReducers)
+  const finalReducerKeys = Object.keys(finalReducers) // 剔除了没用的keys
 
   let unexpectedKeyCache
   if (process.env.NODE_ENV !== 'production') {
@@ -127,9 +127,9 @@ export default function combineReducers(reducers) {
     assertReducerShape(finalReducers)
   } catch (e) {
     shapeAssertionError = e
-  }
+  } // 检测reducer是否有效
 
-  return function combination(state = {}, action) {
+  return function combination(state = {}, action) { // 最终的reducer
     if (shapeAssertionError) {
       throw shapeAssertionError
     }
@@ -152,8 +152,8 @@ export default function combineReducers(reducers) {
         const errorMessage = getUndefinedStateErrorMessage(key, action)
         throw new Error(errorMessage)
       }
-      nextState[key] = nextStateForKey
-      hasChanged = hasChanged || nextStateForKey !== previousStateForKey
+      nextState[key] = nextStateForKey // 对象形式
+      hasChanged = hasChanged || nextStateForKey !== previousStateForKey // 一个变了就全变了
     }
     return hasChanged ? nextState : state
   }

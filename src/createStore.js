@@ -9,7 +9,7 @@ import $$observable from 'symbol-observable'
  */
 export const ActionTypes = {
   INIT: '@@redux/INIT'
-}
+} // 初始化的第一个action
 
 /**
  * Creates a Redux store that holds the state tree.
@@ -40,6 +40,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
   if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
     enhancer = preloadedState
     preloadedState = undefined
+    // 参数置换
   }
 
   if (typeof enhancer !== 'undefined') {
@@ -47,7 +48,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
       throw new Error('Expected the enhancer to be a function.')
     }
 
-    return enhancer(createStore)(reducer, preloadedState)
+    return enhancer(createStore)(reducer, preloadedState) // enhancer类似于中间件的事件
   }
 
   if (typeof reducer !== 'function') {
@@ -56,11 +57,11 @@ export default function createStore(reducer, preloadedState, enhancer) {
 
   let currentReducer = reducer
   let currentState = preloadedState
-  let currentListeners = []
-  let nextListeners = currentListeners
+  let currentListeners = [] // 存储当前的监听函数列表
+  let nextListeners = currentListeners // 储存下一个监听函数列表
   let isDispatching = false
 
-  function ensureCanMutateNextListeners() {
+  function ensureCanMutateNextListeners() { // 浅拷贝以确保可以修改nextListeners
     if (nextListeners === currentListeners) {
       nextListeners = currentListeners.slice()
     }
@@ -98,7 +99,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
    * @param {Function} listener A callback to be invoked on every dispatch.
    * @returns {Function} A function to remove this change listener.
    */
-  function subscribe(listener) {
+  function subscribe(listener) { // 添加订阅监听方法
     if (typeof listener !== 'function') {
       throw new Error('Expected listener to be a function.')
     }
@@ -108,7 +109,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
     ensureCanMutateNextListeners()
     nextListeners.push(listener)
 
-    return function unsubscribe() {
+    return function unsubscribe() { // 移除订阅监听方法
       if (!isSubscribed) {
         return
       }
@@ -161,7 +162,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
       )
     }
 
-    if (isDispatching) {
+    if (isDispatching) { // mark
       throw new Error('Reducers may not dispatch actions.')
     }
 
@@ -197,7 +198,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
     }
 
     currentReducer = nextReducer
-    dispatch({ type: ActionTypes.INIT })
+    dispatch({ type: ActionTypes.INIT }) // 替换后初始化
   }
 
   /**
@@ -206,7 +207,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
    * For more information, see the observable proposal:
    * https://github.com/tc39/proposal-observable
    */
-  function observable() {
+  function observable() { // 提供给其他观察者/响应式库的接口
     const outerSubscribe = subscribe
     return {
       /**
